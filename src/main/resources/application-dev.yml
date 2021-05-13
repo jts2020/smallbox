@@ -1,0 +1,19 @@
+spring:
+  main:
+    allow-bean-definition-overriding: false
+  h2:
+    console:
+      enabled: true
+  datasource:
+    type: com.alibaba.druid.pool.DruidDataSource
+    driver-class-name: org.h2.Driver
+    url: jdbc:h2:mem:dbsa;DB_CLOSE_DELAY=-1
+    username: sa
+    password:
+    initialSize: 2
+    minIdle: 1
+    maxActive: 3
+    testWhileIdle: true
+    validationQuery: SELECT 1 FROM DUAL
+  shardingsphere:
+    enabled: false;

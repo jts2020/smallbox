@@ -1,0 +1,10 @@
+server:
+  port: 8082
+
+spring:
+  profiles:
+    active: shardingsphere
+
+arthas:
+  agentId: smallbox
+  tunnelServer: ws://127.0.0.1:7777/ws
