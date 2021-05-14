@@ -65,8 +65,8 @@ public class BuzService {
     }
 
     @ImportantInterceptor("getStr")
-    public String busiIndex(String param) {
-        log.info("invoked BusiService.busiIndex[{}]", param);
+    public String buzIndex(String param) {
+        log.info("invoked BuzService.buzIndex[{}]", param);
         Integer id = Optional.of(param).map(Integer::parseInt).get();
         Page<TblUser> tblUserPage = new Page<>(2, 3);
         Wrapper<TblUser> wrapper = Wrappers.<TblUser>lambdaQuery()
@@ -80,7 +80,7 @@ public class BuzService {
         StringJoiner res = new StringJoiner("_");
         res.add("busiIndex").add(param).add(tblUerBySql.toString());
         pushDisruptor(param);
-        log.info("res BusiService.busiIndex[{}]", res);
+        log.info("res BuzService.buzIndex[{}]", res);
         return res.toString();
     }
 

@@ -7,8 +7,10 @@ import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.ApplicationListener;
+import org.springframework.stereotype.Service;
 
 import javax.annotation.PreDestroy;
 import java.net.InetSocketAddress;
@@ -18,14 +20,24 @@ import java.util.Objects;
  * @author jts
  */
 @Slf4j
-//@Service
+@Service
 public class NettyService implements ApplicationListener<ApplicationReadyEvent> {
 
     private final ServerChannelInitializer serverChannelInitializer;
-    //new 一个主线程组
+    /**
+     * 主线程组
+     */
     private final EventLoopGroup bossGroup;
-    //new 一个工作线程组
+    /**
+     * 工作线程组
+     */
     private final EventLoopGroup workGroup;
+
+    @Value("${netty.server.hostname:127.0.0.1}")
+    private String hostname;
+
+    @Value("${netty.server.port:8090}")
+    private Integer port;
 
     public NettyService(ServerChannelInitializer serverChannelInitializer) {
         bossGroup = new NioEventLoopGroup(1);
@@ -35,7 +47,7 @@ public class NettyService implements ApplicationListener<ApplicationReadyEvent> 
     }
 
     public void startNettyServer() {
-        InetSocketAddress socketAddress = new InetSocketAddress("127.0.0.1", 8090);
+        InetSocketAddress socketAddress = new InetSocketAddress(hostname, port);
 
         ServerBootstrap bootstrap = new ServerBootstrap()
                 .group(bossGroup, workGroup)

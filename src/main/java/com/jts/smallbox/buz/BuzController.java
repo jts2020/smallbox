@@ -22,8 +22,8 @@ public class BuzController {
 
     @GetMapping(path = "/index")
     public String busiIndex(String param){
-        log.info("invocked BusiController.busiIndex[{}]",param);
-        return buzService.busiIndex(param);
+        log.info("invocked BuzController.busiIndex[{}]",param);
+        return buzService.buzIndex(param);
     }
 
     @GetMapping("/shutdown")
@@ -33,7 +33,7 @@ public class BuzController {
 
     @GetMapping(path = "/ws/push")
     public String wsPush(String param){
-        log.info("invocked BusiController.wsPush[{}]",param);
+        log.info("invocked BuzController.wsPush[{}]",param);
         return buzService.wsPush(param);
     }
 }
