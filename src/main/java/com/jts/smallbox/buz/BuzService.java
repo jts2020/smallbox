@@ -78,7 +78,7 @@ public class BuzService {
         invockUserJdk().getInfo();
         invockUserEnhancer().getInfo();
         StringJoiner res = new StringJoiner("_");
-        res.add("busiIndex").add(param).add(tblUerBySql.toString());
+        res.add("buzIndex").add(param).add(tblUerBySql.toString());
         pushDisruptor(param);
         log.info("res BuzService.buzIndex[{}]", res);
         return res.toString();

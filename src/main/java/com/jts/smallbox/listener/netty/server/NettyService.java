@@ -71,7 +71,7 @@ public class NettyService implements ApplicationListener<ApplicationReadyEvent> 
 
     @Override
     public void onApplicationEvent(ApplicationReadyEvent applicationReadyEvent) {
-        startNettyServer();
+        new Thread(() -> startNettyServer(),"netty:"+port).start();
     }
 
     public void shutdownServer(){
@@ -89,17 +89,7 @@ public class NettyService implements ApplicationListener<ApplicationReadyEvent> 
     }
 
     @PreDestroy
-    public void shutdownServer2(){
-        log.debug("{} shutdownNettyServer2",Thread.currentThread().getName());
-        //关闭主线程组
-        if(Objects.nonNull(bossGroup)){
-            bossGroup.shutdownGracefully();
-            log.debug("{} shutdownNettyServer bossGroup",Thread.currentThread().getName());
-        }
-        //关闭工作线程组
-        if(Objects.nonNull(workGroup)){
-            workGroup.shutdownGracefully();
-            log.debug("{} shutdownNettyServer workGroup",Thread.currentThread().getName());
-        }
+    public void preDestroy(){
+        shutdownServer();
     }
 }

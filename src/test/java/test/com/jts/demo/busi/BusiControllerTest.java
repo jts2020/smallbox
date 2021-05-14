@@ -19,7 +19,7 @@ public class BusiControllerTest {
 
     @Test
     public void testbusiIndex() {
-        String result = restTemplate.getForObject("/busi/index?param=1", String.class);
+        String result = restTemplate.getForObject("/buz/index?param=1", String.class);
         Assert.assertTrue(result.contains("buzIndex_1"));
     }
 
