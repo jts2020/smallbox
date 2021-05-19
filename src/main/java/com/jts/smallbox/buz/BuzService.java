@@ -17,11 +17,15 @@ import com.lmax.disruptor.RingBuffer;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.http.ResponseEntity;
+import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.Objects;
 import java.util.Optional;
 import java.util.StringJoiner;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author jts
@@ -39,6 +43,8 @@ public class BuzService {
     private UserEnhaner userEnhaner;
 
     private TblUserDao tblUserDao;
+
+    private RestTemplate restTemplate = new RestTemplate();
 
     public BuzService(RingBuffer<MessageBo> messageBoRingBuffer) {
         this.messageBoRingBuffer = messageBoRingBuffer;
@@ -90,7 +96,25 @@ public class BuzService {
     }
 
     public String wsPush(String param){
-        WsService.clients.forEach((id,session) -> WsService.onSend(session,Objects.toString(System.nanoTime())));
+        new Thread(()->{
+            String url = "http://hq.sinajs.cn/list=sh603323";
+            while (true){
+                if(!WsService.clients.isEmpty()){
+                    ResponseEntity<String> exchange = restTemplate.getForEntity(url,String.class);
+                    String res = exchange.getBody();
+                    log.debug("get sinajs res [{}]",res);
+                    String[] resSplit = res.split(",");
+                    String msg = resSplit[3];
+                    log.debug("push res [{}]",msg);
+                    WsService.clients.forEach((id,session) -> WsService.onSend(session,msg));
+                    try {
+                        TimeUnit.SECONDS.sleep(3L);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        },"wsPush").start();
         return "SUCCESS";
     }
 

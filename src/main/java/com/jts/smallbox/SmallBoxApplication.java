@@ -1,5 +1,8 @@
 package com.jts.smallbox;
 
+import com.jacob.activeX.ActiveXComponent;
+import com.jacob.com.Dispatch;
+import com.jacob.com.Variant;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
@@ -16,6 +19,7 @@ import java.util.stream.IntStream;
 public class SmallBoxApplication {
 
     public static void main(String[] args) {
+        speak();
         SpringApplication.run(SmallBoxApplication.class,args);
         System.out.println(89 | 12);
         Integer[] t = new Integer[]{9,1,0,5,-1};
@@ -30,6 +34,29 @@ public class SmallBoxApplication {
         System.out.println(Arrays.toString(t));
         System.out.println(Arrays.toString(sort(new int[]{9,1,0,5,-1})));
         System.out.println(halfSearch(new int[]{11},12));
+    }
+
+    private static void speak() {
+        //-Djava.library.path=D:/jacob-1.18/x64
+        ActiveXComponent sap = new ActiveXComponent("Sapi.SpVoice");
+        try {
+            // 音量 0-100
+            sap.setProperty("Volume", new Variant(100));
+            // 语音朗读速度 -10 到 +10
+            sap.setProperty("Rate", new Variant(-2));
+            // 获取执行对象
+            Dispatch sapo = sap.getObject();
+            // 执行朗读
+            Dispatch.call(sapo, "Speak", new Variant("您好，正在启动SmallBox"));
+            // 关闭执行对象
+            sapo.safeRelease();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            // 关闭应用程序连接
+            sap.safeRelease();
+
+        }
     }
 
     private void streamOp(){

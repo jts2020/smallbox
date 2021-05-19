@@ -17,7 +17,7 @@
     //http://127.0.0.1:8081/wsclient.html
     //判断当前浏览器是否支持WebSocket, 主要此处要更换为自己的地址
     if ('WebSocket' in window) {
-        websocket = new WebSocket("ws://127.0.0.1:8081/ws/test");
+        websocket = new WebSocket("ws://397xd65587.wicp.vip:53918/ws/test");
     } else {
         alert('Not support websocket')
     }
@@ -49,7 +49,8 @@
 
     //将消息显示在网页上
     function setMessageInnerHTML(innerHTML) {
-        document.getElementById('message').innerHTML += innerHTML + '<br/>';
+        speech(innerHTML);
+        document.getElementById('message').innerHTML = innerHTML + '<br/>';
     }
 
     //关闭连接
@@ -61,6 +62,16 @@
     function send() {
         var message = document.getElementById('text').value;
         websocket.send(message);
+    }
+
+    //语音
+    function speech(txt){
+        var msgSpeech = new SpeechSynthesisUtterance(txt);
+        //msg.rate = 4 播放语速
+        //msg.pitch = 10 音调高低
+        //msg.text = "播放文本"
+        //msg.volume = 0.5 播放音量
+        window.speechSynthesis.speak(msgSpeech);
     }
 </script>
 </html>
