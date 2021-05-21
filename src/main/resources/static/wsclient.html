@@ -9,15 +9,20 @@
     <input id="text" type="text" />
     <button onclick="send()">Send</button>
     <button onclick="closeWebSocket()">Close</button>
+    <button onclick="push()">Push</button>
     <div id="message"></div>
 </body>
 
 <script type="text/javascript">
+    var host = window.location.host;
+
+    loadJS("http://"+host+"/jquery-3.6.0.min.js",function(){});
+
     var websocket = null;
     //http://127.0.0.1:8081/wsclient.html
-    //判断当前浏览器是否支持WebSocket, 主要此处要更换为自己的地址
+    //判断当前浏览器是否支持WebSocket
     if ('WebSocket' in window) {
-        websocket = new WebSocket("ws://127.0.0.1:8081/ws/test");
+        websocket = new WebSocket("ws://"+host+"/ws/test");
     } else {
         alert('Not support websocket')
     }
@@ -60,18 +65,53 @@
 
     //发送消息
     function send() {
-        var message = document.getElementById('text').value;
+        var message = $("#text").val();
         websocket.send(message);
     }
 
     //语音
     function speech(txt){
         var msgSpeech = new SpeechSynthesisUtterance(txt);
-        //msg.rate = 4 播放语速
-        //msg.pitch = 10 音调高低
-        //msg.text = "播放文本"
-        //msg.volume = 0.5 播放音量
+        //msgSpeech.rate = 4 播放语速
+        //msgSpeech.pitch = 10 音调高低
+        //msgSpeech.text = "播放文本"
+        //msgSpeech.volume = 0.5 播放音量
         window.speechSynthesis.speak(msgSpeech);
+    }
+
+    //push
+    function push(){
+        $.ajax({
+          url: "/buz/ws/push",
+          data: {
+            param: "0001"
+          },
+          success: function( result ) {
+            alert("push");
+          }
+        });
+    }
+
+    function loadJS( url, callback ){
+        var script = document.createElement('script'),
+        fn = callback || function(){};
+        script.type = 'text/javascript';
+        //IE
+        if(script.readyState){
+            script.onreadystatechange = function(){
+                if( script.readyState == 'loaded' || script.readyState == 'complete' ){
+                    script.onreadystatechange = null;
+                    fn();
+                }
+            };
+        }else{
+            //其他浏览器
+            script.onload = function(){
+                fn();
+            };
+        }
+        script.src = url;
+        document.getElementsByTagName('head')[0].appendChild(script);
     }
 </script>
 </html>
