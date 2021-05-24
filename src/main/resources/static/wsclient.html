@@ -68,10 +68,10 @@
         var message = $("#text").val();
         websocket.send(message);
     }
-
+    var msgSpeech = new SpeechSynthesisUtterance();
     //语音
     function speech(txt){
-        var msgSpeech = new SpeechSynthesisUtterance(txt);
+        msgSpeech.text=txt;
         //msgSpeech.rate = 4 播放语速
         //msgSpeech.pitch = 10 音调高低
         //msgSpeech.text = "播放文本"
@@ -87,7 +87,7 @@
             param: "0001"
           },
           success: function( result ) {
-            alert("push");
+            alert(result);
           }
         });
     }
