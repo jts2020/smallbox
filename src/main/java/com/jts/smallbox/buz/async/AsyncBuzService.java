@@ -6,10 +6,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.AsyncContext;
-import javax.servlet.ServletRequest;
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
@@ -44,10 +43,15 @@ public class AsyncBuzService {
             HttpServletResponse response = (HttpServletResponse)asyncContext.getResponse();
             try {
                 response.setCharacterEncoding(StandardCharsets.UTF_8.name());
-                response.setContentType("text/html");
-                response.getOutputStream().write(buzService.buzIndex(req.getParameterMap().get("param")[0]).getBytes(StandardCharsets.UTF_8));
-            } catch (IOException e) {
-                log.info("AsyncBuzService.exec URL [{}], param [{}]",uri,req.getParameterMap(),e);
+                response.setContentType("application/json");
+                ServletOutputStream out = response.getOutputStream();
+                for (String param : req.getParameterMap().get("param")) {
+                    String res = buzService.buzIndex(param);
+                    out.write(res.getBytes(StandardCharsets.UTF_8));
+                }
+                out.flush();
+            } catch (Exception e) {
+                log.error("AsyncBuzService.exec URL [{}], param [{}]",uri,req.getParameterMap(),e);
                 response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             } finally {
                 asyncContext.complete();
