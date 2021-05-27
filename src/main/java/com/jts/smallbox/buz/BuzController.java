@@ -21,8 +21,8 @@ public class BuzController {
 
     private final AsyncBuzService asyncBuzService;
 
-    public BuzController(BuzService busiService,AsyncBuzService asyncBuzService) {
-        this.buzService = busiService;
+    public BuzController(BuzService buzService,AsyncBuzService asyncBuzService) {
+        this.buzService = buzService;
         this.asyncBuzService = asyncBuzService;
     }
 
