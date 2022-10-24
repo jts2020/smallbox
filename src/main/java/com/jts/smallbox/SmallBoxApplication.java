@@ -19,21 +19,9 @@ import java.util.stream.IntStream;
 public class SmallBoxApplication {
 
     public static void main(String[] args) {
-        speak();
+        // speak();
+        // Netty 启动异常 --add-opens java.base/jdk.internal.misc=ALL-UNNAMED -Dio.netty.tryReflectionSetAccessible=true
         SpringApplication.run(SmallBoxApplication.class,args);
-        System.out.println(89 | 12);
-        Integer[] t = new Integer[]{9,1,0,5,-1};
-        Arrays.sort(t,(a,b) ->{
-            if(a> b){
-                return -1;
-            }else if(a<b){
-                return 1;
-            }
-            return 0;
-        });
-        System.out.println(Arrays.toString(t));
-        System.out.println(Arrays.toString(sort(new int[]{9,1,0,5,-1})));
-        System.out.println(halfSearch(new int[]{11},12));
     }
 
     private static void speak() {

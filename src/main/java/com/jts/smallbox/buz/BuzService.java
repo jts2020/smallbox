@@ -17,11 +17,15 @@ import com.lmax.disruptor.RingBuffer;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
+import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.StringJoiner;
@@ -97,12 +101,18 @@ public class BuzService {
 
     public String wsPush(String param){
         new Thread(()->{
-            String url = "http://hq.sinajs.cn/list=sh603323";
+            String url = "http://hq.sinajs.cn/list=sh601860";
             while (!WsService.clients.isEmpty()){
-                ResponseEntity<String> exchange = restTemplate.getForEntity(url,String.class);
+
+                HttpHeaders headers = new HttpHeaders();
+                headers.add("referer","http://finance.sina.com.cn");
+
+                HttpEntity<String> req = new HttpEntity<>(null, headers);
+                restTemplate.getMessageConverters().set(1,new StringHttpMessageConverter(StandardCharsets.UTF_8));
+                ResponseEntity<String> exchange = restTemplate.postForEntity(url,req,String.class);
                 String res = exchange.getBody();
-                log.debug("get sinajs res [{}]",res);
-                String[] resSplit = res.split(",");
+                log.debug("get sina.js res [{}]",res);
+                String[] resSplit = res.split(",",-1);
                 String msg = resSplit[3];
                 log.debug("push res [{}]",msg);
                 WsService.clients.forEach((id,session) -> WsService.onSend(session,msg));
