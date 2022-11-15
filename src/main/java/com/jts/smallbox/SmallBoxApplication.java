@@ -7,7 +7,6 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Random;
 import java.util.stream.IntStream;
@@ -21,7 +20,7 @@ public class SmallBoxApplication {
     public static void main(String[] args) {
         // speak();
         // Netty 启动异常 --add-opens java.base/jdk.internal.misc=ALL-UNNAMED -Dio.netty.tryReflectionSetAccessible=true
-        SpringApplication.run(SmallBoxApplication.class,args);
+        SpringApplication.run(SmallBoxApplication.class, args);
     }
 
     private static void speak() {
@@ -47,51 +46,52 @@ public class SmallBoxApplication {
         }
     }
 
-    private void streamOp(){
-        IntStream.range(0,100).parallel()
+    private void streamOp() {
+
+        IntStream.range(0, 100).parallel()
                 .skip(0L)
                 .filter(val -> val % 2 == 0)
                 .map(val -> val + new Random().nextInt(100))
-                .filter(val -> val>2)
-                .collect(ArrayList<Integer>::new,(list, val) -> {list.add(val);},(m,n) -> {m.addAll(n);})
+                .filter(val -> val > 2)
+                .collect(ArrayList<Integer>::new, ArrayList::add, ArrayList::addAll)
                 .stream()
                 .sorted(Comparator.reverseOrder())
                 .forEach(System.out::println);
     }
 
-    private static int[] sort(int[] arr){
-        for(int i = 1;i<arr.length;i++){
+    private static int[] sort(int[] arr) {
+        for (int i = 1; i < arr.length; i++) {
             boolean flag = true;
-            for (int j = 0;j<arr.length-1;j++){
-                if(arr[j]>arr[j+1]){
-                    arr[j] = arr[j]+arr[j+1];
-                    arr[j+1] = arr[j] - arr[j+1];
-                    arr[j] = arr[j] - arr[j+1];
+            for (int j = 0; j < arr.length - 1; j++) {
+                if (arr[j] > arr[j + 1]) {
+                    arr[j] = arr[j] + arr[j + 1];
+                    arr[j + 1] = arr[j] - arr[j + 1];
+                    arr[j] = arr[j] - arr[j + 1];
                     flag = false;
                 }
             }
-            if(flag){
+            if (flag) {
                 return arr;
             }
         }
         return arr;
     }
 
-    private static int halfSearch(int[] arr,int target){
-       int min = 0;
-       int max = arr.length-1;
-       int mid ;
-       while (min <= max){
-           mid = (min+max)/2;
-           if(arr[mid]>target){
-               max = mid-1;
-           }else if(arr[mid] < target){
-               min = mid+1;
-           }else {
-               return mid;
-           }
-       }
-       return -1;
+    private static int halfSearch(int[] arr, int target) {
+        int min = 0;
+        int max = arr.length - 1;
+        int mid;
+        while (min <= max) {
+            mid = (min + max) / 2;
+            if (arr[mid] > target) {
+                max = mid - 1;
+            } else if (arr[mid] < target) {
+                min = mid + 1;
+            } else {
+                return mid;
+            }
+        }
+        return -1;
     }
 
 }

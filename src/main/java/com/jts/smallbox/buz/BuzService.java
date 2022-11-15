@@ -101,7 +101,7 @@ public class BuzService {
 
     public String wsPush(String param){
         new Thread(()->{
-            String url = "http://hq.sinajs.cn/list=sh601860";
+            String url = "http://hq.sinajs.cn/list=sh601398";
             while (!WsService.clients.isEmpty()){
 
                 HttpHeaders headers = new HttpHeaders();
