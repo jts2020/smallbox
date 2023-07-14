@@ -38,7 +38,7 @@ public class SmallBoxApplication {
                 .filter(val -> val % 2 == 0)
                 .map(val -> val + new Random().nextInt(100))
                 .filter(val -> val>2)
-                .collect(ArrayList<Integer>::new,(list, val) -> {list.add(val);},(m,n) -> {m.addAll(n);})
+                .collect(ArrayList<Integer>::new, ArrayList::add, ArrayList::addAll)
                 .stream()
                 .sorted(Comparator.reverseOrder())
                 .forEach(System.out::println);
