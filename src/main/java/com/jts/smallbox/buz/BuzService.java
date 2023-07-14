@@ -17,11 +17,19 @@ import com.lmax.disruptor.RingBuffer;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseEntity;
+import org.springframework.http.client.SimpleClientHttpRequestFactory;
+import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.StringJoiner;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author jts
@@ -39,6 +47,8 @@ public class BuzService {
     private UserEnhaner userEnhaner;
 
     private TblUserDao tblUserDao;
+
+    private RestTemplate restTemplate = new RestTemplate();
 
     public BuzService(RingBuffer<MessageBo> messageBoRingBuffer) {
         this.messageBoRingBuffer = messageBoRingBuffer;
@@ -85,12 +95,35 @@ public class BuzService {
     }
 
     public void shutdown(){
-            context.close();
-            log.info("shutdown success");
+        context.close();
+        log.info("shutdown success");
     }
 
     public String wsPush(String param){
-        WsService.clients.forEach((id,session) -> WsService.onSend(session,Objects.toString(System.nanoTime())));
+        new Thread(()->{
+            String url = "http://hq.sinajs.cn/list=sh601398";
+            while (!WsService.clients.isEmpty()){
+
+                HttpHeaders headers = new HttpHeaders();
+                headers.add("referer","http://finance.sina.com.cn");
+
+                HttpEntity<String> req = new HttpEntity<>(null, headers);
+                restTemplate.getMessageConverters().set(1,new StringHttpMessageConverter(StandardCharsets.UTF_8));
+                ResponseEntity<String> exchange = restTemplate.postForEntity(url,req,String.class);
+                String res = exchange.getBody();
+                log.debug("get sina.js res [{}]",res);
+                String[] resSplit = res.split(",",-1);
+                String msg = resSplit[3];
+                log.debug("push res [{}]",msg);
+                WsService.clients.forEach((id,session) -> WsService.onSend(session,msg));
+                try {
+                    TimeUnit.SECONDS.sleep(6L);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+            log.debug("wsPush over~");
+        },"wsPush").start();
         return "SUCCESS";
     }
 

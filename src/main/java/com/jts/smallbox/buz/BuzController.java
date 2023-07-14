@@ -1,9 +1,12 @@
 package com.jts.smallbox.buz;
 
+import com.jts.smallbox.buz.async.AsyncBuzService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import javax.servlet.http.HttpServletRequest;
 
 
 /**
@@ -16,13 +19,16 @@ public class BuzController {
 
     private final BuzService buzService;
 
-    public BuzController(BuzService busiService) {
-        this.buzService = busiService;
+    private final AsyncBuzService asyncBuzService;
+
+    public BuzController(BuzService buzService,AsyncBuzService asyncBuzService) {
+        this.buzService = buzService;
+        this.asyncBuzService = asyncBuzService;
     }
 
     @GetMapping(path = "/index")
-    public String busiIndex(String param){
-        log.info("invocked BuzController.busiIndex[{}]",param);
+    public String buzIndex(String param){
+        log.info("invoked BuzController.buzIndex[{}]",param);
         return buzService.buzIndex(param);
     }
 
@@ -33,7 +39,14 @@ public class BuzController {
 
     @GetMapping(path = "/ws/push")
     public String wsPush(String param){
-        log.info("invocked BuzController.wsPush[{}]",param);
+        log.info("invoked BuzController.wsPush[{}]",param);
         return buzService.wsPush(param);
+    }
+
+    @GetMapping("/async")
+    public void asyncReq(String param,HttpServletRequest req){
+        log.info("invoked BuzController.asyncReq[{}]",param);
+        asyncBuzService.exec(req);
+        log.info("invoked BuzController.asyncReq over~");
     }
 }
