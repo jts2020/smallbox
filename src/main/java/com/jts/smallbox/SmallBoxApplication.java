@@ -15,9 +15,13 @@ import java.util.stream.IntStream;
 @SpringBootApplication()
 public class SmallBoxApplication {
 
+    /**
+     * netty "Reflective setAccessible(true) disabled“ 增加-Dio.netty.tryReflectionSetAccessible=true
+     * @param args
+     */
     public static void main(String[] args) {
         SpringApplication.run(SmallBoxApplication.class,args);
-        System.out.println(89 | 12);
+        /*System.out.println(89 | 12);
         Integer[] t = new Integer[]{9,1,0,5,-1};
         Arrays.sort(t,(a,b) ->{
             if(a> b){
@@ -29,7 +33,7 @@ public class SmallBoxApplication {
         });
         System.out.println(Arrays.toString(t));
         System.out.println(Arrays.toString(sort(new int[]{9,1,0,5,-1})));
-        System.out.println(halfSearch(new int[]{11},12));
+        System.out.println(halfSearch(new int[]{11},12));*/
     }
 
     private void streamOp(){
